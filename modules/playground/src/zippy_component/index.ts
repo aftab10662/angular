@@ -1,5 +1,15 @@
-import {bootstrap} from '@angular/platform-browser';
-import {Component} from '@angular/core';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import {Component, NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+
 import {Zippy} from './app/zippy';
 
 @Component({
@@ -11,15 +21,18 @@ import {Zippy} from './app/zippy';
     <ul>
       <li *ngFor="let  log of logs">{{log}}</li>
     </ul>
-  `,
-  directives: [Zippy]
+  `
 })
-class ZippyApp {
+export class ZippyApp {
   logs: string[] = [];
 
-  pushLog(log: string) { this.logs.push(log); }
+  pushLog(log: string) {
+    this.logs.push(log);
+  }
 }
 
-export function main() {
-  bootstrap(ZippyApp);
+@NgModule({declarations: [ZippyApp, Zippy], bootstrap: [ZippyApp], imports: [BrowserModule]})
+export class ExampleModule {
 }
+
+platformBrowserDynamic().bootstrapModule(ExampleModule);

@@ -1,7 +1,17 @@
-import {verifyNoBrowserErrors} from '@angular/platform-browser/testing_e2e';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import {browser} from 'protractor';
+
+import {verifyNoBrowserErrors} from '../../../../dev-infra/benchmark/driver-utilities';
 
 describe('Order Management CRUD', function() {
-  var URL = 'all/playground/src/order_management/index.html';
+  const URL = '/';
 
   it('should work', function() {
     browser.get(URL);

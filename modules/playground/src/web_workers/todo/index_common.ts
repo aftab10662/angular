@@ -1,13 +1,16 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
 import {Component} from '@angular/core';
-import {NgFor, FORM_DIRECTIVES} from '@angular/common';
+
 import {Store, Todo, TodoFactory} from './services/TodoStore';
 
-@Component({
-  selector: 'todo-app',
-  viewProviders: [Store, TodoFactory],
-  templateUrl: 'todo.html',
-  directives: [NgFor, FORM_DIRECTIVES]
-})
+@Component({selector: 'todo-app', viewProviders: [Store, TodoFactory], templateUrl: 'todo.html'})
 export class TodoApp {
   todoEdit: Todo = null;
   inputValue: string;
@@ -15,15 +18,15 @@ export class TodoApp {
   hideCompleted: boolean = false;
   isComplete: boolean = false;
 
-  constructor(public todoStore: Store, public factory: TodoFactory) {}
+  constructor(public todoStore: Store<Todo>, public factory: TodoFactory) {}
 
   enterTodo(): void {
     this.addTodo(this.inputValue);
-    this.inputValue = "";
+    this.inputValue = '';
   }
 
-  doneEditing($event: any /** TODO #9100 */, todo: Todo): void {
-    var which = $event.keyCode;
+  doneEditing($event: KeyboardEvent, todo: Todo): void {
+    const which = $event.keyCode;
     if (which === 13) {
       todo.title = todo.editTitle;
       this.todoEdit = null;
@@ -33,11 +36,17 @@ export class TodoApp {
     }
   }
 
-  editTodo(todo: Todo): void { this.todoEdit = todo; }
+  editTodo(todo: Todo): void {
+    this.todoEdit = todo;
+  }
 
-  addTodo(newTitle: string): void { this.todoStore.add(this.factory.create(newTitle, false)); }
+  addTodo(newTitle: string): void {
+    this.todoStore.add(this.factory.create(newTitle, false));
+  }
 
-  completeMe(todo: Todo): void { todo.completed = !todo.completed; }
+  completeMe(todo: Todo): void {
+    todo.completed = !todo.completed;
+  }
 
   toggleCompleted(): void {
     this.hideActive = !this.hideActive;
@@ -54,12 +63,18 @@ export class TodoApp {
     this.hideActive = false;
   }
 
-  deleteMe(todo: Todo): void { this.todoStore.remove(todo); }
-
-  toggleAll($event: any /** TODO #9100 */): void {
-    this.isComplete = !this.isComplete;
-    this.todoStore.list.forEach((todo: Todo) => { todo.completed = this.isComplete; });
+  deleteMe(todo: Todo): void {
+    this.todoStore.remove(todo);
   }
 
-  clearCompleted(): void { this.todoStore.removeBy((todo: Todo) => todo.completed); }
+  toggleAll($event: MouseEvent): void {
+    this.isComplete = !this.isComplete;
+    this.todoStore.list.forEach((todo: Todo) => {
+      todo.completed = this.isComplete;
+    });
+  }
+
+  clearCompleted(): void {
+    this.todoStore.removeBy((todo: Todo) => todo.completed);
+  }
 }

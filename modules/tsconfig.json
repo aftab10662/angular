@@ -1,37 +1,33 @@
 {
-  "angularCompilerOptions": {
-    "skipTemplateCodegen": true
-  },
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "../dist/all/",
     "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "selenium-webdriver": ["../node_modules/@types/selenium-webdriver/index.d.ts"],
       "rxjs/*": ["../node_modules/rxjs/*"],
-      "@angular/*": ["./@angular/*"],
-      "@angular/tsc-wrapped": ["../dist/tools/@angular/tsc-wrapped"]
+      "@angular/*": ["../dist/all/@angular/*"]
     },
     "rootDir": ".",
     "inlineSourceMap": true,
-    "lib": ["es6", "dom"],
-    "target": "es5"
+    "lib": ["es5", "dom", "es2015.promise", "es2015.collection", "es2015.iterable"],
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "target": "es5",
+    "types": ["angular"]
   },
   "exclude": [
-    "angular1_router",
-    "angular2",
-    "benchmarks",
-    "benchmarks_external",
-    "benchpress",
     "payload_tests",
-    "rollup-test",
-    "upgrade-ts2dart.d.ts",
-    "zone-ts2dart.d.ts",
-    "@angular/compiler-cli/integrationtest"
-  ]
+    "playground/",
+    "benchmarks/"
+  ],
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true
+  }
 }

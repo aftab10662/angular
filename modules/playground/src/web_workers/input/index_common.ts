@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
 import {Component} from '@angular/core';
 
 @Component({
@@ -15,10 +23,14 @@ import {Component} from '@angular/core';
   `
 })
 export class InputCmp {
-  inputVal = "";
-  textareaVal = "";
+  inputVal = '';
+  textareaVal = '';
 
-  inputChanged(e: any /** TODO #9100 */) { this.inputVal = e.target.value; }
+  inputChanged(e: Event) {
+    this.inputVal = (e.target as HTMLInputElement).value;
+  }
 
-  textAreaChanged(e: any /** TODO #9100 */) { this.textareaVal = e.target.value; }
+  textAreaChanged(e: Event) {
+    this.textareaVal = (e.target as HTMLTextAreaElement).value;
+  }
 }

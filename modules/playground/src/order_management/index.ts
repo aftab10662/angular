@@ -1,61 +1,69 @@
-import {bootstrap} from '@angular/platform-browser';
-import {
-  Component,
-  EventEmitter,
-  Injectable,
-  Input,
-  Output
-} from '@angular/core';
-import {NgIf, NgFor, FORM_DIRECTIVES} from '@angular/common';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
-import {ListWrapper} from '@angular/core/src/facade/collection';
+import {Component, EventEmitter, Injectable, Input, NgModule, Output} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 /**
- * You can find the Angular 1 implementation of this example here:
+ * You can find the AngularJS implementation of this example here:
  * https://github.com/wardbell/ng1DataBinding
  */
 
 // ---- model
 
 class OrderItem {
-  constructor(public orderItemId: number, public orderId: number, public productName: string,
-              public qty: number, public unitPrice: number) {}
+  constructor(
+      public orderItemId: number, public orderId: number, public productName: string,
+      public qty: number, public unitPrice: number) {}
 
-  get total(): number { return this.qty * this.unitPrice; }
+  get total(): number {
+    return this.qty * this.unitPrice;
+  }
 }
 
 class Order {
-  constructor(public orderId: number, public customerName: string, public limit: number,
-              private _dataService: DataService) {}
+  constructor(
+      public orderId: number, public customerName: string, public limit: number,
+      private _dataService: DataService) {}
 
-  get items(): OrderItem[] { return this._dataService.itemsFor(this); }
-  get total(): number { return this.items.map(i => i.total).reduce((a, b) => a + b, 0); }
+  get items(): OrderItem[] {
+    return this._dataService.itemsFor(this);
+  }
+  get total(): number {
+    return this.items.map(i => i.total).reduce((a, b) => a + b, 0);
+  }
 }
 
 
 
 // ---- services
 
-var _nextId = 1000;
+let _nextId = 1000;
 @Injectable()
-class DataService {
+export class DataService {
   orderItems: OrderItem[];
   orders: Order[];
   currentOrder: Order = null;
 
   constructor() {
     this.orders = [
-      new Order(_nextId++, "J. Coltrane", 100, this),
-      new Order(_nextId++, "B. Evans", 200, this)
+      new Order(_nextId++, 'J. Coltrane', 100, this), new Order(_nextId++, 'B. Evans', 200, this)
     ];
 
     this.orderItems = [
-      new OrderItem(_nextId++, this.orders[0].orderId, "Bread", 5, 1),
-      new OrderItem(_nextId++, this.orders[0].orderId, "Brie", 5, 2),
-      new OrderItem(_nextId++, this.orders[0].orderId, "IPA", 5, 3),
+      new OrderItem(_nextId++, this.orders[0].orderId, 'Bread', 5, 1),
+      new OrderItem(_nextId++, this.orders[0].orderId, 'Brie', 5, 2),
+      new OrderItem(_nextId++, this.orders[0].orderId, 'IPA', 5, 3),
 
-      new OrderItem(_nextId++, this.orders[1].orderId, "Mozzarella", 5, 2),
-      new OrderItem(_nextId++, this.orders[1].orderId, "Wine", 5, 3)
+      new OrderItem(_nextId++, this.orders[1].orderId, 'Mozzarella', 5, 2),
+      new OrderItem(_nextId++, this.orders[1].orderId, 'Wine', 5, 3)
     ];
   }
 
@@ -64,10 +72,12 @@ class DataService {
   }
 
   addItemForOrder(order: Order): void {
-    this.orderItems.push(new OrderItem(_nextId++, order.orderId, "", 0, 0));
+    this.orderItems.push(new OrderItem(_nextId++, order.orderId, '', 0, 0));
   }
 
-  deleteItem(item: OrderItem): void { ListWrapper.remove(this.orderItems, item); }
+  deleteItem(item: OrderItem): void {
+    this.orderItems.splice(this.orderItems.indexOf(item), 1);
+  }
 }
 
 
@@ -100,14 +110,17 @@ class DataService {
 
       <button (click)="select(order)">Select</button>
   	</div>
-  `,
-  directives: [FORM_DIRECTIVES, NgFor]
+  `
 })
-class OrderListComponent {
+export class OrderListComponent {
   orders: Order[];
 
-  constructor(private _service: DataService) { this.orders = _service.orders; }
-  select(order: Order): void { this._service.currentOrder = order; }
+  constructor(private _service: DataService) {
+    this.orders = _service.orders;
+  }
+  select(order: Order): void {
+    this._service.currentOrder = order;
+  }
 }
 
 
@@ -134,14 +147,15 @@ class OrderListComponent {
 
       <button (click)="onDelete()">Delete</button>
     </div>
-  `,
-  directives: [FORM_DIRECTIVES]
+  `
 })
-class OrderItemComponent {
+export class OrderItemComponent {
   @Input() item: OrderItem;
   @Output() delete = new EventEmitter();
 
-  onDelete(): void { this.delete.emit(this.item); }
+  onDelete(): void {
+    this.delete.emit(this.item);
+  }
 }
 
 @Component({
@@ -171,17 +185,22 @@ class OrderItemComponent {
       <button (click)="addItem()">Add Item</button>
       <order-item-cmp *ngFor="let item of order.items" [item]="item" (delete)="deleteItem(item)"></order-item-cmp>
     </div>
-  `,
-  directives: [FORM_DIRECTIVES, OrderItemComponent, NgFor, NgIf]
+  `
 })
-class OrderDetailsComponent {
+export class OrderDetailsComponent {
   constructor(private _service: DataService) {}
 
-  get order(): Order { return this._service.currentOrder; }
+  get order(): Order {
+    return this._service.currentOrder;
+  }
 
-  deleteItem(item: OrderItem): void { this._service.deleteItem(item); }
+  deleteItem(item: OrderItem): void {
+    this._service.deleteItem(item);
+  }
 
-  addItem(): void { this._service.addItemForOrder(this.order); }
+  addItem(): void {
+    this._service.addItemForOrder(this.order);
+  }
 }
 
 @Component({
@@ -190,12 +209,18 @@ class OrderDetailsComponent {
   template: `
     <order-list-cmp></order-list-cmp>
     <order-details-cmp></order-details-cmp>
-  `,
-  directives: [OrderListComponent, OrderDetailsComponent]
+  `
 })
-class OrderManagementApplication {
+export class OrderManagementApplication {
 }
 
-export function main() {
-  bootstrap(OrderManagementApplication);
+@NgModule({
+  bootstrap: [OrderManagementApplication],
+  declarations:
+      [OrderManagementApplication, OrderListComponent, OrderDetailsComponent, OrderItemComponent],
+  imports: [BrowserModule, FormsModule]
+})
+export class ExampleModule {
 }
+
+platformBrowserDynamic().bootstrapModule(ExampleModule);

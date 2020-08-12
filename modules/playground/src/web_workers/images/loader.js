@@ -1,37 +1,19 @@
-importScripts("../../../vendor/es6-shim.js",
-  "../../../vendor/zone.js",
-  "../../../vendor/long-stack-trace-zone.js",
-  "../../../vendor/system.src.js",
-  "../../../vendor/Reflect.js",
-  "b64.js");
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
+importScripts('angular/modules/playground/src/web_workers/worker-configure.js');
 
 System.config({
-  baseURL: '/all',
-
-  map: {'rxjs': '/all/playground/vendor/rxjs'},
-
-  packages: {
-    '@angular/core': {main: 'index.js', defaultExtension: 'js'},
-    '@angular/compiler': {main: 'index.js', defaultExtension: 'js'},
-    '@angular/common': {main: 'index.js', defaultExtension: 'js'},
-    '@angular/platform-browser': {main: 'index.js', defaultExtension: 'js'},
-    '@angular/router': {main: 'index.js', defaultExtension: 'js'},
-    'rxjs': {
-      defaultExtension: 'js'
-    }
+  map: {
+    'base64-js': 'npm/node_modules/base64-js/base64js.min.js',
   },
-
-  defaultJSExtensions: true
+  packages: {'angular/modules/playground/src/web_workers': {defaultExtension: 'js'}}
 });
 
-System.import("playground/src/web_workers/images/background_index")
-  .then(
-    function(m) {
-      try {
-        m.main();
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    function(error) { console.error("error loading background", error); });
+System.import('./background_index.js')
+    .catch(error => console.error('error loading background', error));

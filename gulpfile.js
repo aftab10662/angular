@@ -1,67 +1,35 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
 'use strict';
 
 // THIS CHECK SHOULD BE THE FIRST THING IN THIS FILE
 // This is to ensure that we catch env issues before we error while requiring other dependencies.
-require('./tools/check-environment')(
-    {requiredNpmVersion: '>=3.5.3 <4.0.0', requiredNodeVersion: '>=5.4.1 <6.0.0'});
-
+const engines = require('./package.json').engines;
+require('./tools/check-environment')({
+  requiredNodeVersion: engines.node,
+  requiredNpmVersion: engines.npm,
+  requiredYarnVersion: engines.yarn
+});
 
 const gulp = require('gulp');
-const path = require('path');
 
-const srcsToFmt = ['tools/**/*.ts'];
-
-gulp.task('format:enforce', () => {
-  const format = require('gulp-clang-format');
-  const clangFormat = require('clang-format');
-  return gulp.src(srcsToFmt).pipe(
-    format.checkFormat('file', clangFormat, {verbose: true, fail: true}));
-});
-
-gulp.task('format', () => {
-  const format = require('gulp-clang-format');
-  const clangFormat = require('clang-format');
-  return gulp.src(srcsToFmt, { base: '.' }).pipe(
-    format.format('file', clangFormat)).pipe(gulp.dest('.'));
-});
-
-gulp.task('lint', ['format:enforce', 'tools:build'], () => {
-  const tslint = require('gulp-tslint');
-  // Built-in rules are at
-  // https://github.com/palantir/tslint#supported-rules
-  const tslintConfig = require('./tslint.json');
-  return gulp.src(['modules/@angular/**/*.ts', '!modules/@angular/*/test/**'])
-    .pipe(tslint({
-      tslint: require('tslint').default,
-      configuration: tslintConfig,
-      rulesDirectory: 'dist/tools/tslint'
-    }))
-    .pipe(tslint.report('prose', {emitError: true}));
-});
-
-gulp.task('tools:build', (done) => { tsc('tools/', done); });
-
-
-gulp.task('serve', () => {
-  let connect = require('gulp-connect');
-  let cors = require('cors');
-
-  connect.server({
-    root: `${__dirname}/dist`,
-    port: 8000,
-    livereload: false,
-    open: false,
-    middleware: (connect, opt) => [cors()]
-  });
-});
-
-
-function tsc(projectPath, done) {
-  let child_process = require('child_process');
-
-  child_process
-      .spawn(
-          `${__dirname}/node_modules/.bin/tsc`, ['-p', path.join(__dirname, projectPath)],
-          {stdio: 'inherit'})
-      .on('close', (errorCode) => done(errorCode));
+// See `tools/gulp-tasks/README.md` for information about task loading.
+function loadTask(fileName, taskName) {
+  const taskModule = require('./tools/gulp-tasks/' + fileName);
+  const task = taskName ? taskModule[taskName] : taskModule;
+  return task(gulp);
 }
+
+
+gulp.task('source-map-test', loadTask('source-map-test'));
+gulp.task('changelog', loadTask('changelog'));
+gulp.task('changelog:zonejs', loadTask('changelog-zonejs'));
+gulp.task('check-env', () => {/* this is a noop because the env test ran already above */});
+gulp.task('cldr:extract', loadTask('cldr', 'extract'));
+gulp.task('cldr:gen-closure-locale', loadTask('cldr', 'closure'));

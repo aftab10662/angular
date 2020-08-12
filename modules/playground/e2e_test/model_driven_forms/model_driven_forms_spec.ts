@@ -1,21 +1,30 @@
-import {verifyNoBrowserErrors} from '@angular/platform-browser/testing_e2e';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import {browser, by, element} from 'protractor';
+
+import {verifyNoBrowserErrors} from '../../../../dev-infra/benchmark/driver-utilities';
 
 describe('Model-Driven Forms', function() {
-
   afterEach(verifyNoBrowserErrors);
 
-  var URL = 'all/playground/src/model_driven_forms/index.html';
+  const URL = '/';
 
   it('should display errors', function() {
     browser.get(URL);
 
-    var form = element.all(by.css('form')).first();
-    var input = element.all(by.css('#creditCard')).first();
-    var firstName = element.all(by.css('#firstName')).first();
+    const form = element.all(by.css('form')).first();
+    const input = element.all(by.css('#creditCard')).first();
+    const firstName = element.all(by.css('#firstName')).first();
 
     input.sendKeys('invalid');
     firstName.click();
 
-    expect(form.getInnerHtml()).toContain('is invalid credit card number');
+    expect(form.getAttribute('innerHTML')).toContain('is invalid credit card number');
   });
 });

@@ -8,16 +8,30 @@
     "moduleResolution": "node",
     "outDir": "../dist/tools/",
     "noImplicitAny": true,
-    "paths": {
-    },
+    "noFallthroughCasesInSwitch": true,
+    "paths": {},
     "rootDir": ".",
     "sourceMap": true,
     "inlineSources": true,
-    "lib": ["es6", "dom"],
-    "target": "es5"
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "target": "es5",
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ]
   },
   "exclude": [
+    "testing",
     "node_modules",
-    "typings-test"
-  ]
+    "ts-api-guardian",
+    "typings-test",
+    "public_api_guard",
+    "docs"
+  ],
+  "bazelOptions": {
+    "suppressTsconfigOverrideWarnings": true
+  }
 }

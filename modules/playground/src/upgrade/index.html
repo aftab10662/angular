@@ -12,11 +12,12 @@
   </style>
 <body>
   <upgrade-app ng-controller="Index" [user]="name" (reset)="name=''">
-    Your name: <input ngModel="name">
+    Your name: <input ng-model="name">
     <hr>
     <span class="greeting">Greetings from {{name}}!</span>
   </upgrade-app>
-  <script src="/all/playground/vendor/angular.js"></script>
-  <script src="../bootstrap.js"></script>
+
+  <!--load location for ts_devserver-->
+  <script src="/app_bundle.js"></script>
 </body>
 </html>

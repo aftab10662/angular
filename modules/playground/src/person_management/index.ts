@@ -1,15 +1,24 @@
-import {bootstrap} from '@angular/platform-browser';
-import {Component, Injectable} from '@angular/core';
-import {NgIf, NgFor, FORM_DIRECTIVES} from '@angular/common';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import {Component, Injectable, NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 /**
- * You can find the Angular 1 implementation of this example here:
+ * You can find the AngularJS implementation of this example here:
  * https://github.com/wardbell/ng1DataBinding
  */
 
 // ---- model
 
-var _nextId = 1;
+let _nextId = 1;
 class Person {
   personId: number;
   mom: Person;
@@ -26,9 +35,15 @@ class Person {
     this.personId = _nextId++;
   }
 
-  get age(): number { return 2015 - this.yearOfBirth; }
-  get fullName(): string { return `${this.firstName} ${this.lastName}`; }
-  get friendNames(): string { return this.friends.map(f => f.fullName).join(', '); }
+  get age(): number {
+    return 2015 - this.yearOfBirth;
+  }
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+  get friendNames(): string {
+    return this.friends.map(f => f.fullName).join(', ');
+  }
 }
 
 
@@ -36,22 +51,17 @@ class Person {
 // ---- services
 
 @Injectable()
-class DataService {
+export class DataService {
   currentPerson: Person;
   persons: Person[];
 
   constructor() {
     this.persons = [
-      new Person('Victor', 'Savkin', 1930),
-      new Person('Igor', 'Minar', 1920),
-      new Person('John', 'Papa', 1910),
-      new Person('Nancy', 'Duarte', 1910),
-      new Person('Jack', 'Papa', 1910),
-      new Person('Jill', 'Papa', 1910),
-      new Person('Ward', 'Bell', 1910),
-      new Person('Robert', 'Bell', 1910),
-      new Person('Tracy', 'Ward', 1910),
-      new Person('Dan', 'Wahlin', 1910)
+      new Person('Victor', 'Savkin', 1930), new Person('Igor', 'Minar', 1920),
+      new Person('John', 'Papa', 1910), new Person('Nancy', 'Duarte', 1910),
+      new Person('Jack', 'Papa', 1910), new Person('Jill', 'Papa', 1910),
+      new Person('Ward', 'Bell', 1910), new Person('Robert', 'Bell', 1910),
+      new Person('Tracy', 'Ward', 1910), new Person('Dan', 'Wahlin', 1910)
     ];
 
     this.persons[0].friends = [0, 1, 2, 6, 9].map(_ => this.persons[_]);
@@ -81,13 +91,15 @@ class DataService {
       <form>
           <div>
             <label>
-              First: <input [(ngModel)]="person.firstName" type="text" placeholder="First name">
+              First: <input [(ngModel)]="person.firstName" type="text" placeholder="First name"
+                            name="firstName">
             </label>
           </div>
 
           <div>
             <label>
-              Last: <input [(ngModel)]="person.lastName" type="text" placeholder="Last name">
+              Last: <input [(ngModel)]="person.lastName" type="text" placeholder="Last name"
+                           name="lastName">
             </label>
           </div>
 
@@ -96,12 +108,13 @@ class DataService {
           </div>
       </form>
     </div>
-  `,
-  directives: [FORM_DIRECTIVES]
+  `
 })
-class FullNameComponent {
+export class FullNameComponent {
   constructor(private _service: DataService) {}
-  get person(): Person { return this._service.currentPerson; }
+  get person(): Person {
+    return this._service.currentPerson;
+  }
 }
 
 @Component({
@@ -112,29 +125,34 @@ class FullNameComponent {
     <div>
       <form>
         <div>
-					<label>First: <input [(ngModel)]="person.firstName" type="text" placeholder="First name"></label>
+					<label>First: <input [(ngModel)]="person.firstName" type="text" placeholder="First name"
+                               name="firstName"></label>
 				</div>
 
         <div>
-					<label>Last: <input [(ngModel)]="person.lastName" type="text" placeholder="Last name"></label>
+					<label>Last: <input [(ngModel)]="person.lastName" type="text" placeholder="Last name"
+                              name="lastName"></label>
 				</div>
 
         <div>
-					<label>Year of birth: <input [(ngModel)]="person.yearOfBirth" type="number" placeholder="Year of birth"></label>
+					<label>Year of birth: <input [(ngModel)]="person.yearOfBirth" type="number" placeholder="Year of birth"
+                                       name="yearOfBirth"></label>
           Age: {{person.age}}
 				</div>\
 
         <div *ngIf="person.mom != null">
 					<label>Mom:</label>
-          <input [(ngModel)]="person.mom.firstName" type="text" placeholder="Mom's first name">
-          <input [(ngModel)]="person.mom.lastName" type="text" placeholder="Mom's last name">
+          <input [(ngModel)]="person.mom.firstName" type="text" placeholder="Mom's first name" name="momFirstName">
+          <input [(ngModel)]="person.mom.lastName" type="text" placeholder="Mom's last name" name="momLastName">
           {{person.mom.fullName}}
 				</div>
 
         <div *ngIf="person.dad != null">
 					<label>Dad:</label>
-          <input [(ngModel)]="person.dad.firstName" type="text" placeholder="Dad's first name">
-          <input [(ngModel)]="person.dad.lastName" type="text" placeholder="Dad's last name">
+          <input [(ngModel)]="person.dad.firstName" type="text" placeholder="Dad's first name"
+                 name="dasFirstName">
+          <input [(ngModel)]="person.dad.lastName" type="text" placeholder="Dad's last name"
+                 name="dadLastName">
           {{person.dad.fullName}}
 				</div>
 
@@ -144,12 +162,13 @@ class FullNameComponent {
 				</div>
       </form>
     </div>
-  `,
-  directives: [FORM_DIRECTIVES, NgIf]
+  `
 })
-class PersonsDetailComponent {
+export class PersonsDetailComponent {
   constructor(private _service: DataService) {}
-  get person(): Person { return this._service.currentPerson; }
+  get person(): Person {
+    return this._service.currentPerson;
+  }
 }
 
 @Component({
@@ -165,15 +184,18 @@ class PersonsDetailComponent {
 
      <person-detail-cmp></person-detail-cmp>
     </div>
-  `,
-  directives: [FORM_DIRECTIVES, PersonsDetailComponent, NgFor]
+  `
 })
-class PersonsComponent {
+export class PersonsComponent {
   persons: Person[];
 
-  constructor(private _service: DataService) { this.persons = _service.persons; }
+  constructor(private _service: DataService) {
+    this.persons = _service.persons;
+  }
 
-  select(person: Person): void { this._service.currentPerson = person; }
+  select(person: Person): void {
+    this._service.currentPerson = person;
+  }
 }
 
 
@@ -186,16 +208,26 @@ class PersonsComponent {
 
     <full-name-cmp *ngIf="mode == 'editName'"></full-name-cmp>
     <persons-cmp *ngIf="mode == 'personList'"></persons-cmp>
-  `,
-  directives: [FullNameComponent, PersonsComponent, NgIf]
+  `
 })
-class PersonManagementApplication {
+export class PersonManagementApplication {
   mode: string;
 
-  switchToEditName(): void { this.mode = 'editName'; }
-  switchToPersonList(): void { this.mode = 'personList'; }
+  switchToEditName(): void {
+    this.mode = 'editName';
+  }
+  switchToPersonList(): void {
+    this.mode = 'personList';
+  }
 }
 
-export function main() {
-  bootstrap(PersonManagementApplication);
+@NgModule({
+  bootstrap: [PersonManagementApplication],
+  declarations:
+      [PersonManagementApplication, FullNameComponent, PersonsComponent, PersonsDetailComponent],
+  imports: [BrowserModule, FormsModule]
+})
+export class ExampleModule {
 }
+
+platformBrowserDynamic().bootstrapModule(ExampleModule);

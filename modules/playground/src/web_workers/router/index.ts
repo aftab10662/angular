@@ -1,5 +1,11 @@
-import {bootstrapRender, WORKER_RENDER_LOCATION_PROVIDERS} from '@angular/platform-browser';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
-export function main() {
-  bootstrapRender("loader.js", WORKER_RENDER_LOCATION_PROVIDERS);
-}
+import {bootstrapWorkerUi, WORKER_UI_LOCATION_PROVIDERS} from '@angular/platform-webworker';
+
+bootstrapWorkerUi('loader.js', WORKER_UI_LOCATION_PROVIDERS);

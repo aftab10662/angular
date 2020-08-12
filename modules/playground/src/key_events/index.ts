@@ -1,6 +1,14 @@
-import {bootstrap} from '@angular/platform-browser';
-import {Component} from '@angular/core';
-import {KeyEventsPlugin} from '@angular/platform-browser';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import {Component, NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 @Component({
   selector: 'key-events-app',
@@ -14,23 +22,58 @@ import {KeyEventsPlugin} from '@angular/platform-browser';
     tabindex="0"
   >{{shiftEnter ? 'You pressed shift.enter!' : ''}}</div>`
 })
-class KeyEventsApp {
+export class KeyEventsApp {
   lastKey: string = '(none)';
   shiftEnter: boolean = false;
 
-  onKeyDown(event: any /** TODO #9100 */): void {
-    this.lastKey = KeyEventsPlugin.getEventFullKey(event);
+  onKeyDown(event: KeyboardEvent): void {
+    this.lastKey = KeyEventsApp._getEventFullKey(event);
     event.preventDefault();
   }
 
-  onShiftEnter(event: any /** TODO #9100 */): void {
+  onShiftEnter(event: KeyboardEvent): void {
     this.shiftEnter = true;
     event.preventDefault();
   }
 
-  resetShiftEnter(): void { this.shiftEnter = false; }
+  resetShiftEnter(): void {
+    this.shiftEnter = false;
+  }
+
+  /**
+   * Get a more readable version of current pressed keys.
+   * @see KeyEventsPlugin.getEventFullKey
+   */
+  private static _getEventFullKey(event: KeyboardEvent): string {
+    const modifierKeys = ['alt', 'control', 'meta', 'shift'];
+    const modifierKeyGetters: {[key: string]: (event: KeyboardEvent) => boolean} = {
+      'alt': (event: KeyboardEvent) => event.altKey,
+      'control': (event: KeyboardEvent) => event.ctrlKey,
+      'meta': (event: KeyboardEvent) => event.metaKey,
+      'shift': (event: KeyboardEvent) => event.shiftKey
+    };
+
+    let fullKey = '';
+    let key = event.key.toLowerCase();
+    if (key === ' ') {
+      key = 'space';  // for readability
+    } else if (key === '.') {
+      key = 'dot';  // because '.' is used as a separator in event names
+    }
+    modifierKeys.forEach(modifierName => {
+      if (modifierName != key) {
+        const modifierGetter = modifierKeyGetters[modifierName];
+        if (modifierGetter(event)) {
+          fullKey += modifierName + '.';
+        }
+      }
+    });
+    return fullKey + key;
+  }
 }
 
-export function main() {
-  bootstrap(KeyEventsApp);
+@NgModule({declarations: [KeyEventsApp], bootstrap: [KeyEventsApp], imports: [BrowserModule]})
+export class ExampleModule {
 }
+
+platformBrowserDynamic().bootstrapModule(ExampleModule);

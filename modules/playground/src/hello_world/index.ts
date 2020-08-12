@@ -1,16 +1,14 @@
-import {bootstrap} from '@angular/platform-browser';
-import {Renderer, ElementRef, Component, Directive, Injectable} from '@angular/core';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
-export function main() {
-  // Bootstrapping only requires specifying a root component.
-  // The boundary between the Angular application and the rest of the page is
-  // the shadowDom of this root component.
-  // The selector of the component passed in is used to find where to insert the
-  // application.
-  // You can use the light dom of the <hello-app> tag as temporary content (for
-  // example 'Loading...') before the application is ready.
-  bootstrap(HelloCmp);
-}
+import {Component, Directive, ElementRef, Injectable, NgModule, Renderer2} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 // A service available to the Injector, used by the HelloCmp component.
 @Injectable()
@@ -24,13 +22,13 @@ export class GreetingService {
 export class RedDec {
   // ElementRef is always injectable and it wraps the element on which the
   // directive was found by the compiler.
-  constructor(el: ElementRef, renderer: Renderer) {
-    renderer.setElementStyle(el.nativeElement, 'color', 'red');
+  constructor(el: ElementRef, renderer: Renderer2) {
+    renderer.setStyle(el.nativeElement, 'color', 'red');
   }
 }
 
-// Angular 2.0 supports 2 basic types of directives:
-// - Component - the basic building blocks of Angular 2.0 apps. Backed by
+// Angular supports 2 basic types of directives:
+// - Component - the basic building blocks of Angular apps. Backed by
 //   ShadowDom.(http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/)
 // - Directive - add behavior to existing elements.
 
@@ -45,17 +43,22 @@ export class RedDec {
   // Expressions in the template (like {{greeting}}) are evaluated in the
   // context of the HelloCmp class below.
   template: `<div class="greeting">{{greeting}} <span red>world</span>!</div>
-           <button class="changeButton" (click)="changeGreeting()">change greeting</button>`,
-  // All directives used in the template need to be specified. This allows for
-  // modularity (RedDec can only be used in this template)
-  // and better tooling (the template can be invalidated if the attribute is
-  // misspelled).
-  directives: [RedDec]
+           <button class="changeButton" (click)="changeGreeting()">change greeting</button>`
 })
 export class HelloCmp {
   greeting: string;
 
-  constructor(service: GreetingService) { this.greeting = service.greeting; }
+  constructor(service: GreetingService) {
+    this.greeting = service.greeting;
+  }
 
-  changeGreeting(): void { this.greeting = 'howdy'; }
+  changeGreeting(): void {
+    this.greeting = 'howdy';
+  }
 }
+
+@NgModule({declarations: [HelloCmp, RedDec], bootstrap: [HelloCmp], imports: [BrowserModule]})
+export class ExampleModule {
+}
+
+platformBrowserDynamic().bootstrapModule(ExampleModule);
